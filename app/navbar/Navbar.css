@@ -1,0 +1,89 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #fff5e6, #ffe4c4);
+    height: 90px;
+    padding: 0 30px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.nav-l {
+    font-weight: bold;
+    font-size: 25px;
+    background: linear-gradient(90deg, hotpink, deeppink, purple);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+}
+
+
+.nav-r {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    
+}
+
+.nav-r button {
+    padding: 10px 16px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(90deg, hotpink, deeppink, purple);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 0 20px;
+    }
+    
+    .nav-r button {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .nav-l h1 {
+        font-size: 22px;
+    }
+    
+    .nav-r {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .signout-btn {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}

@@ -1,0 +1,122 @@
+.home-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
+  padding: 20px;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 420px;
+  /* le même max-width que login/signup pour cohérence */
+}
+
+.welcome-box {
+  background: white;
+  border-radius: 16px;
+  padding: 48px 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
+  text-align: center;
+}
+
+.welcome-box:hover {
+  transform: translateY(-4px);
+}
+
+.welcome-box h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  background: linear-gradient(90deg, hotpink, deeppink, purple);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 3s ease infinite;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 15px;
+  margin: 0 0 32px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-login {
+  background: #e0398d;
+  color: white;
+}
+
+.btn-login:hover {
+  background: #c02e78;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(224, 57, 141, 0.3);
+}
+
+.btn-signup {
+  background: #e0398d;
+  color: white;
+}
+
+.btn-signup:hover {
+  background: #c02e78;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(224, 57, 141, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .welcome-box {
+    padding: 40px 24px;
+  }
+}
+
+/* Animations — identiques à login & signup */
+@keyframes glow {
+  0% {
+    box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
+  }
+  50% {
+    box-shadow: 0 8px 20px rgba(255, 118, 162, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
