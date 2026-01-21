@@ -5,6 +5,8 @@ import axios from 'axios';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2 } from 'lucide-react'; // ← install: npm install lucide-react
 import './login.css';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,6 +14,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const router=useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,13 +29,9 @@ export default function Login() {
       });
 
       const { token, user } = res.data; // assuming your backend returns { token, user: { id, name, email, ... } }
-
       localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.id || user._id); // be flexible
-      // Optional: store more user info
-      // localStorage.setItem('user', JSON.stringify(user));
-
-      window.location.href = '/accueil'; // or use next/navigation router.push('/accueil')
+      localStorage.setItem('userId', user.id || user._id); 
+      window.location.href = '/accueil'; 
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
@@ -42,7 +42,7 @@ export default function Login() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="login-page">
       <div className="login-container">

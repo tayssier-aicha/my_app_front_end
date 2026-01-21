@@ -4,14 +4,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
+ background: linear-gradient(135deg, #f8f0ff 0%, #e0d4ff 100%);
   padding: 20px;
 }
 
 .signup-container {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
 }
 
 .signup-box {
@@ -29,17 +28,18 @@
 }
 
 .signup-box h1 {
-  font-size: 28px;
+  font-size: 2.1rem;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px;
-  text-align: center;
-  background: linear-gradient(90deg, hotpink, deeppink, purple);
+  margin: 0 0 10px;
+  background: linear-gradient(90deg, hotpink, deeppink, purple, #c026d3, hotpink);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradient 3s ease infinite;
+  background-clip: text;
+  animation: gradient 4s ease infinite;
+  text-align: center;
 }
+
 
 .subtitle {
   color: #64748b;
@@ -97,32 +97,35 @@
 }
 
 .signup-btn {
-  width: 100%;
-  padding: 14px;
-  background: #e0398d;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #e0398d, #c026d3);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.02rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .signup-btn:hover:not(:disabled) {
-  background: #c02e78;
-  transform: translateY(-1px);
+  background: linear-gradient(90deg, #c026d3, #a21ca8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(192, 38, 211, 0.3);
 }
-
 .signup-btn:disabled {
   background: #e2e8f0;
   color: #94a3b8;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
+
 
 .error-message {
   background: #fee2e2;

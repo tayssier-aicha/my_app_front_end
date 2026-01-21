@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import './page.css'; // ou home.css selon ton organisation
+import ProtectedRoutes from './utils/ProtectedRoutes';
 
 export default function Home() {
   return (
@@ -13,11 +14,10 @@ export default function Home() {
 
           <div className="buttons">
             <Link href="/login" passHref>
-              <button className="btn btn-login">Sign In</button>
+              <button className="btn-login">Sign In</button>
             </Link>
-
             <Link href="/signup" passHref>
-              <button className="btn btn-signup">Create Account</button>
+              <button className="btn-signup">Create Account</button>
             </Link>
           </div>
         </div>
