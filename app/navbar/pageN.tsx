@@ -31,6 +31,7 @@ const Navbar = () => {
     ];
 
     return (
+        
         <nav className="navbar">
             <div className="nav-l">
                 <h1>Lost and found</h1>
@@ -45,14 +46,17 @@ const Navbar = () => {
                         {item.label}
                     </button>
                 ))}
+                
                 <button 
                     onClick={() => router.push("/")}
                     className="signout-btn"
                 >
                     Sign Out
                 </button>
+                
             </div>
         </nav>
+       
     );
 };
 

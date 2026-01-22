@@ -4,14 +4,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
+  background: linear-gradient(135deg, #f8f0ff 0%, #e0d4ff 100%);
   padding: 20px;
 }
 
 .login-container {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9fd 100%);
 }
 
 .login-box {

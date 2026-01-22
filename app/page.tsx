@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import './page.css'; // ou home.css selon ton organisation
-import ProtectedRoutes from './utils/ProtectedRoutes';
 
 export default function Home() {
   return (
@@ -11,8 +10,9 @@ export default function Home() {
         <div className="welcome-box">
           <h1>Welcome</h1>
           <p className="subtitle">Sign in or create an account to continue</p>
-
+          
           <div className="buttons">
+           
             <Link href="/login" passHref>
               <button className="btn-login">Sign In</button>
             </Link>
