@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import { Eye, EyeOff, Loader2 } from 'lucide-react'; // ← install: npm install lucide-react
-import './login.css';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import { Eye, EyeOff, Loader2 } from "lucide-react"; // ← install: npm install lucide-react
+import "./login.css";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const router=useRouter()
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,26 +23,43 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}user/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}user/login`,
+        {
+          email,
+          password,
+        },
+      );
 
       const { token, user } = res.data; // assuming your backend returns { token, user: { id, name, email, ... } }
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.id || user._id); 
-      window.location.href = '/accueil'; 
+
+      console.log("----------------------");
+      console.log(user);
+      console.log("----------------------");
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", user?.id || user?._id);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: user._id || user.id,
+          name: user.name,
+          email: user.email,
+          isVerified:user.isVerified,
+          // only add fields you really need everywhere in the app
+        }),
+      );
+      window.location.href = "/accueil";
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
         err.response?.data?.error ||
-        'Login failed. Please check your credentials.';
+        "Login failed. Please check your credentials.";
       setError(message);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="login-page">
       <div className="login-container">
@@ -71,7 +88,7 @@ export default function Login() {
             <div className="password-wrapper">
               <input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -82,7 +99,7 @@ export default function Login() {
                 type="button"
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -96,7 +113,7 @@ export default function Login() {
                 Signing in...
               </>
             ) : (
-              'Sign In'
+              "Sign In"
             )}
           </button>
 

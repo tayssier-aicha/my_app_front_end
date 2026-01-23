@@ -1,43 +1,3 @@
-/*'use client';
-import { useRouter } from "next/navigation";
-import "./accueil.css";
-import Navbar from "../navbar/pageN";
-import { useEffect,useState } from "react";
-
-function Accueil() {
-    /*const router=useRouter();
-    const [checked, setChecked] = useState(false);
-    useEffect(()=>{
-        const token=localStorage.getItem('token');
-        if(!token){
-            router.replace('/login')
-        }
-        else{
-            setChecked(true)
-        }
-    },[])
-    if(!checked){
-        return null;
-    }*/
-   /*
-    return(
-        <div className="accueil-container">
-            <Navbar />
-            <div className="content-A">
-                <h1>Lost & Found application</h1>
-                <p>is a platform where users can report lost items or declare found ones.
-                Together, we help each other recover what matters.</p>
-            </div>
-            <div className="lost">
-                Lost
-            </div>
-            <div className="found">
-                Found
-            </div>
-        </div>
-    );
-}
-export default Accueil;*/
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -45,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from '../navbar/pageN';
 import './accueil.css'; 
 
-export default function Accueil() {
+export default function Accueil(_userid) {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -60,11 +20,13 @@ export default function Accueil() {
   }, [router]);
 
   if (!isMounted) return null;
-
+  
+  
+  
+  
   return (
     <div className="accueil-page">
       <Navbar />
-
       <section className="hero">
         <div className="hero-content">
           <h1>Find what really matters</h1>
@@ -76,7 +38,8 @@ export default function Accueil() {
           <div className="hero-cta">
             <button
               className="btn-lost"
-              onClick={() => router.push('/reportlost')}
+              onClick={() => router.push('/reportlost')
+              }
             >
               I've lost something 
             </button>
@@ -126,7 +89,6 @@ export default function Accueil() {
         
       </section>
 
-      {/* CTA final */}
       <section className="final-cta">
         <div className="container">
           <h2>Take the first step toward recovery</h2>

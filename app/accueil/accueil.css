@@ -115,7 +115,7 @@
 
 .step-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(228, 12, 131, 0.4);
 }
 
 .step-number {
