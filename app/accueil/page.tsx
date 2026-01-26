@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from '../navbar/pageN';
 import './accueil.css'; 
 
-export default function Accueil(_userid) {
+function Accueil(_userid: any) {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -101,3 +101,4 @@ export default function Accueil(_userid) {
     </div>
   );
 }
+export default Accueil;

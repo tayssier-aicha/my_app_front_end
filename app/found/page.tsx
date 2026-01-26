@@ -5,8 +5,10 @@ import Navbar from '../navbar/pageN';
 import './found.css';
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Item {
+  category: string;
   user: any;
   _id: string;
   description?: string;
@@ -16,7 +18,8 @@ interface Item {
   type: string;
 }
 
-export default function Found() {
+function Found() {
+  const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,7 +79,7 @@ export default function Found() {
                     alt={item.description || 'Found item'}
                     className="item-image"
                     onError={(e) => {
-                      e.currentTarget.src = '/placeholder-image.jpg'; // fallback
+                      e.currentTarget.src = '/placeholder-image.jpg'; 
                       e.currentTarget.alt = 'Image not available';
                     }}
                   />
@@ -99,7 +102,7 @@ export default function Found() {
         )}
       </div>
 
-      {/* Modal */}
+      
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
           <div
@@ -111,7 +114,7 @@ export default function Found() {
               onClick={() => setSelectedItem(null)}
               aria-label="Close"
             >
-              <X size={28} />
+              <X size={30} />
             </button>
 
             <div className="modal-image-wrapper">
@@ -142,11 +145,28 @@ export default function Found() {
                   : 'Not specified'}
               </p>
               <p>
+                <strong>Category:</strong>{' '}
+                {selectedItem.category
+                  ? selectedItem.category
+                  : 'Not specified'}
+              </p>
+              <p>
                 <strong>Description:</strong>{' '}
                 {selectedItem.description
                   ? selectedItem.description
                   : 'Not specified'}
               </p>
+              
+                  <div className="modal-actions">
+                <button
+                  className="message-btn"
+                  onClick={() =>
+                    router.push(`/messages`)
+                  }
+                >
+                  Message
+                </button>
+              </div>
 
             </div>
           </div>
@@ -155,3 +175,4 @@ export default function Found() {
     </div>
   );
 }
+export default Found;

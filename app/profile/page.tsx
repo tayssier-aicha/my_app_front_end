@@ -20,7 +20,6 @@ export default function Profile() {
   const router = useRouter();
 
   useEffect(() => {
-    // Try to get user from localStorage
     const storedUser = localStorage.getItem('user');
 
     if (storedUser) {
@@ -29,7 +28,7 @@ export default function Profile() {
         setUser(parsedUser);
       } catch (err) {
         console.error("Failed to parse user from localStorage", err);
-        localStorage.removeItem('user'); // clean up bad data
+        localStorage.removeItem('user'); 
       }
     }
     setLoading(false);
@@ -37,12 +36,9 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    // If you also store a token:
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('userId');
 
     setUser(null);
-    router.push('/login'); // or '/' — wherever you want to redirect
+    router.push('/login');
   };
 
   if (loading) {
@@ -102,7 +98,7 @@ export default function Profile() {
               <div>
                 <label>Joined</label>
                 <p>
-                  {user.createdAt 
+                  {user.createdAt
                     ? new Date(user.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -113,14 +109,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Add more fields later if needed
-            <div className="info-row">
-              <User size={20} />
-              <div>
-                <label>User ID</label>
-                <p>{user._id || '—'}</p>
-              </div>
-            </div> */}
           </div>
 
           <button 

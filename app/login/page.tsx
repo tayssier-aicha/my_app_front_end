@@ -3,9 +3,8 @@
 import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2 } from "lucide-react"; // ← install: npm install lucide-react
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import "./login.css";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -31,7 +30,7 @@ export default function Login() {
         },
       );
 
-      const { token, user } = res.data; // assuming your backend returns { token, user: { id, name, email, ... } }
+      const { token, user } = res.data;
 
       console.log("----------------------");
       console.log(user);
@@ -45,7 +44,7 @@ export default function Login() {
           name: user.name,
           email: user.email,
           isVerified:user.isVerified,
-          // only add fields you really need everywhere in the app
+          
         }),
       );
       window.location.href = "/accueil";

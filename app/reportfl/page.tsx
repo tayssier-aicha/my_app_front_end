@@ -9,6 +9,7 @@ function Report_Found() {
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+  const [category,setCategory]=useState('');
   const [date, setDate] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,8 +18,7 @@ function Report_Found() {
     e.preventDefault();
     setLoading(true);
 
-    // Get userId from localStorage
-    const userId = localStorage.getItem('userId'); // ← adjust key name if different
+    const userId = localStorage.getItem('userId'); 
 
     if (!userId) {
       alert("You must be logged in to report an item.");
@@ -26,13 +26,14 @@ function Report_Found() {
       return;
     }
 
-    // Prepare FormData (because you're sending a file + JSON)
+   
     const formData = new FormData();
     formData.append("type", type);
     formData.append("description", description);
+    formData.append("category",category);
     formData.append("location", location);
     formData.append("date", date);
-    formData.append("user", userId);           // ← added here
+    formData.append("user", userId);           
     if (image) {
       formData.append("image", image);
     }
@@ -47,11 +48,10 @@ function Report_Found() {
           },
         }
       );
-
       console.log("Item reported successfully:", response.data);
-      // Optional: reset form, show success message, redirect...
       setType('');
       setDescription('');
+      setCategory('');
       setLocation('');
       setDate('');
       setImage(null);
@@ -67,8 +67,8 @@ function Report_Found() {
   return (
     <div className="Report-F-container">
       <Navbar />
-      <div className="content">
-        <h1>Report Found</h1>
+      <div className="content-l-s">
+        <h1>Report Found/Lost</h1>
         <form className="form-box" onSubmit={handleReport}>
           <div className="form-group">
             <label htmlFor="type">Type</label>
@@ -89,12 +89,26 @@ function Report_Found() {
             <input
               id="description"
               type="text"
-              placeholder="type of item"
+              placeholder="Item Description"
               value={description}
-              onChange={(e) => setDescription(e.target.value.trim())}
+              onChange={(e) => setDescription(e.target.value)}
               required
             />
           </div>
+          <div className="form-group">
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="">Select category</option>
+            <option value="mobile">Electronics</option>
+            <option value="accessories">Accessories</option>
+            <option value="clothing">Clothing</option>
+          </select>
+        </div>
 
           <div className="form-group">
             <label htmlFor="date">Date</label>
@@ -114,7 +128,7 @@ function Report_Found() {
               type="text"
               placeholder="location of found"
               value={location}
-              onChange={(e) => setLocation(e.target.value.trim())}
+              onChange={(e) => setLocation(e.target.value)}
               required
             />
           </div>

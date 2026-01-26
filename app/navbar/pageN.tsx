@@ -7,8 +7,6 @@ import "./Navbar.css";
 const Navbar = () => {
   const router = useRouter();
   const [activePage, setActivePage] = useState("");
-
-  // Détecter la page active
   useEffect(() => {
     const path = window.location.pathname;
     const pageName = path.split("/")[1] || "accueil";
@@ -24,9 +22,9 @@ const Navbar = () => {
   const navItems = [
     { path: "/accueil", label: "Home", key: "accueil" },
     { path: "/lost", label: "Lost", key: "lost" },
-    { path: "/reportlost", label: "Report Lost", key: "reportlost" },
     { path: "/found", label: "Found", key: "found" },
-    { path: "/reportfound", label: "Report Found", key: "reportfound" },
+    { path: "/reportfl", label: "Report Lost or Found Item", key: "reportLFI" },
+    { path: "/messages", label: "Messages", key: "msg" },
     { path: "/profile", label: "Profile", key: "profile" },
   ];
 
@@ -48,10 +46,10 @@ const Navbar = () => {
 
         <button
           onClick={() => {
-            // 1️⃣ Vider le localStorage
+            //Vider le localStorage
             localStorage.clear();
 
-            // 2️⃣ Rediriger vers la page d'accueil
+            // Rediriger vers la page d'accueil
             router.push("/");
           }}
           className="signout-btn"

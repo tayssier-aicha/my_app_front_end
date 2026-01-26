@@ -1,26 +1,28 @@
 
 .Report-F-container {
     min-height: 100vh;
-    background: #f8fafc;
+    background: #f7eefa;
     font-family: system-ui, -apple-system, sans-serif;
     color: #1f2937;
     display: flex;
     flex-direction: column;
+
 }
 
-.content {
+.content-l-s {
     background: white;
     padding: 40px 30px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    box-shadow: 0 10px 30px rgba(240, 36, 138, 0.3);
     width: 100%;
     max-width: 500px;
     text-align: center;
     margin: auto; 
+
 }
 
 
-.content h1 {
+.content-l-s h1 {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 30px;
@@ -46,7 +48,7 @@
     font-weight: 600;
     color: #4b5563;
 }
-
+.form-group select,
 .form-group input[type="text"],
 .form-group input[type="date"],
 .form-group input[type="file"] {
@@ -58,6 +60,11 @@
 }
 
 .form-group input:focus {
+    border-color: #f783c3;
+    box-shadow: 0 0 8px rgba(247,131,195,0.3);
+    outline: none;
+}
+.form-group select:focus {
     border-color: #f783c3;
     box-shadow: 0 0 8px rgba(247,131,195,0.3);
     outline: none;
