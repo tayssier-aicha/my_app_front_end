@@ -25,6 +25,8 @@ function Lost() {
 
   const router = useRouter();
 
+  
+
   const fetchItems = async () => {
     try {
       const res = await axios.get(
@@ -43,13 +45,19 @@ function Lost() {
   useEffect(() => {
     fetchItems();
   }, []);
+  
+  const handleClique = () => {
+    
+    router.push(`/messages`);
+
+  }
   return (
     <div className="lost-page">
       <Navbar />
       <div className="container-L">
         <h1>Lost Items</h1>
 
-        {loading && <p className="status-message">Loading found items...</p>}
+        {loading && <p className="status-message">Loading Lost items...</p>}
 
         {error && <p className="status-message error">{error}</p>}
 
@@ -133,7 +141,7 @@ function Lost() {
                   : 'Not specified'}
               </p> 
               <p>
-                <strong>Founded By:</strong>{' '}
+                <strong>lost By:</strong>{' '}
                 {selectedItem.user?.name
                   ? selectedItem.user?.name
                   : 'Not specified'}
@@ -153,9 +161,7 @@ function Lost() {
               <div className="modal-actions">
                 <button
                   className="message-btn"
-                  onClick={() =>
-                    router.push(`/messages`)
-                  }
+                  onClick={handleClique}
                 >
                   Message
                 </button>
