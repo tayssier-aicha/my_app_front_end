@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Navbar from '../navbar/pageN';
 import './messages.css';
 import axios from 'axios';
+import io from 'socket.io-client';
+const socket = io(process.env.NEXT_PUBLIC_API_URL!);
+
 
 export default function MessagesPage() {
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
@@ -11,8 +14,8 @@ export default function MessagesPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
 
-  // ================= LOAD CONVERSATIONS =================
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -39,7 +42,6 @@ export default function MessagesPage() {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}message/${conversationId}`
       );
-
       setMessages(res.data);
     } catch (err) {
       console.error(err);
@@ -52,20 +54,54 @@ export default function MessagesPage() {
     (c) => c._id === selectedConvId
   );
 
-    const handleClick = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}send`, {
-        senderId: currentUser?._id,
-        receiverId:
-          selectedConv?.participants.find(
-            (p: any) => p._id !== currentUser?._id
-          )?._id || null,
-      });
+  useEffect(() => {
+    if (selectedConvId) {
+      fetchMessages(selectedConvId);
+    }
+  }, [selectedConvId]);
 
-    } catch (err) {
-      console.error(err);
-    };}
+
+
+  const handleClick = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!newMessage.trim() || !selectedConvId) return;
+
+  const messageData = {
+    conversationId: selectedConvId,
+    senderId: currentUser._id,
+    text: newMessage.trim(),
+    createdAt: new Date(),
+  };
+
+  try {
+    // envoyer en temps réel
+    socket.emit('sendMessage', messageData);
+
+    // sauvegarder en DB
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}message/send`,
+      messageData
+    );
+    
+
+    setMessages((prev) => [...prev, res.data]);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+  useEffect(() => {
+  if (selectedConvId) {
+    socket.emit('joinRoom', selectedConvId);
+    fetchMessages(selectedConvId);
+  }
+}, [selectedConvId]);
+
+
+
+
 
   return (
     <div className="messages-page">
@@ -110,7 +146,7 @@ export default function MessagesPage() {
                       {other?.name?.charAt(0).toUpperCase()}
                     </div>
                     {!lastMsg?.read && (
-                      <span className="unread-badge">•</span>
+                      <span className="unread-indicator"></span>
                     )}
                   </div>
 
@@ -175,6 +211,8 @@ export default function MessagesPage() {
                   <input
                     type="text"
                     placeholder="tape a messsages..."
+                     onChange={(e) => setNewMessage(e.target.value)}
+
                   />
                   <button onClick={handleClick}>send</button>
                 </div>
