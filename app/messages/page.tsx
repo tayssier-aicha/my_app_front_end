@@ -1,25 +1,68 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '../navbar/pageN';
 import './messages.css';
 import axios from 'axios';
 import io from 'socket.io-client';
-const socket = io(process.env.NEXT_PUBLIC_API_URL!);
 
+// Socket outside component (singleton)
+const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
+  autoConnect: false,
+});
 
 export default function MessagesPage() {
-  const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const initialConvId = searchParams.get('conv');
+
+  const [selectedConvId, setSelectedConvId] = useState<string | null>(initialConvId);
   const [conversations, setConversations] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [newMessage, setNewMessage] = useState('');
 
+  // ─── Ref for auto-scroll ───────────────────────────────────────────────
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Connect / disconnect socket
+  useEffect(() => {
+    socket.connect();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Join room when conversation changes
+  useEffect(() => {
+    if (selectedConvId) {
+      socket.emit('joinConversation', selectedConvId);
+      fetchMessages(selectedConvId);
+    }
+  }, [selectedConvId]);
+
+  // Receive real-time messages
+  useEffect(() => {
+    socket.on('receiveMessage', (msg) => {
+      if (msg.conversationId === selectedConvId) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    });
+
+    return () => {
+      socket.off('receiveMessage');
+    };
+  }, [selectedConvId]);
+
+  // Load user conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user?._id) return;
+
         setCurrentUser(user);
 
         const res = await axios.get(
@@ -27,13 +70,18 @@ export default function MessagesPage() {
         );
 
         setConversations(res.data);
+
+        // Auto-select conversation from URL if it exists
+        if (initialConvId && res.data.some((c: any) => c._id === initialConvId)) {
+          setSelectedConvId(initialConvId);
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchConversations();
-  }, []);
+  }, [initialConvId]);
 
   const fetchMessages = async (conversationId: string) => {
     try {
@@ -42,6 +90,7 @@ export default function MessagesPage() {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}message/${conversationId}`
       );
+
       setMessages(res.data);
     } catch (err) {
       console.error(err);
@@ -50,58 +99,39 @@ export default function MessagesPage() {
     }
   };
 
-  const selectedConv = conversations.find(
-    (c) => c._id === selectedConvId
-  );
+  const handleClick = async () => {
+    if (!newMessage.trim() || !selectedConvId) return;
 
-  useEffect(() => {
-    if (selectedConvId) {
-      fetchMessages(selectedConvId);
+    const messageData = {
+      conversationId: selectedConvId,
+      senderId: currentUser._id,
+      text: newMessage.trim(),
+    };
+
+    try {
+      // Send via socket for instant feel
+      socket.emit('sendMessage', messageData);
+
+      // Save to DB
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}message/send`,
+        messageData
+      );
+
+      setMessages((prev) => [...prev, res.data]);
+      setNewMessage('');
+    } catch (err) {
+      console.error(err);
     }
-  }, [selectedConvId]);
-
-
-
-  const handleClick = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  if (!newMessage.trim() || !selectedConvId) return;
-
-  const messageData = {
-    conversationId: selectedConvId,
-    senderId: currentUser._id,
-    text: newMessage.trim(),
-    createdAt: new Date(),
   };
 
-  try {
-    // envoyer en temps réel
-    socket.emit('sendMessage', messageData);
-
-    // sauvegarder en DB
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}message/send`,
-      messageData
-    );
-    
-
-    setMessages((prev) => [...prev, res.data]);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-
+  // ─── AUTO-SCROLL ───────────────────────────────────────────────────────
   useEffect(() => {
-  if (selectedConvId) {
-    socket.emit('joinRoom', selectedConvId);
-    fetchMessages(selectedConvId);
-  }
-}, [selectedConvId]);
+    // Scroll to bottom when messages change or conversation is selected
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, selectedConvId]);
 
-
-
-
+  const selectedConv = conversations.find((c) => c._id === selectedConvId);
 
   return (
     <div className="messages-page">
@@ -116,10 +146,9 @@ export default function MessagesPage() {
             </div>
 
             {conversations.map((conv) => {
-              const other =
-                conv.participants.find(
-                  (p: any) => p._id !== currentUser?._id
-                ) || conv.participants[0];
+              const other = conv.participants.find(
+                (p: any) => p._id !== currentUser?._id
+              ) || conv.participants[0];
 
               const lastMsg = conv.lastMessage;
 
@@ -138,7 +167,6 @@ export default function MessagesPage() {
                   className={`conversation-item ${isActive ? 'active' : ''}`}
                   onClick={() => {
                     setSelectedConvId(conv._id);
-                    fetchMessages(conv._id);
                   }}
                 >
                   <div className="profile-header">
@@ -171,7 +199,7 @@ export default function MessagesPage() {
               <div className="chat-content">
 
                 <div className="chat-header">
-                  Discussion with {' '}
+                  Discussion with{' '}
                   {
                     selectedConv.participants.find(
                       (p: any) => p._id !== currentUser?._id
@@ -179,7 +207,6 @@ export default function MessagesPage() {
                   }
                 </div>
 
-                
                 <div className="chat-messages">
                   {loadingMessages ? (
                     <p className="loading">loading...</p>
@@ -205,14 +232,17 @@ export default function MessagesPage() {
                       );
                     })
                   )}
+
+                  {/* This empty div is used for auto-scroll */}
+                  <div ref={messagesEndRef} />
                 </div>
 
                 <div className="chat-input">
                   <input
                     type="text"
                     placeholder="tape a messsages..."
-                     onChange={(e) => setNewMessage(e.target.value)}
-
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
                   />
                   <button onClick={handleClick}>send</button>
                 </div>

@@ -24,6 +24,7 @@ function Found() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [creatingChat, setCreatingChat] = useState(false);
 
   const fetchItems = async () => {
     try {
@@ -47,6 +48,50 @@ function Found() {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  const handleMessageOwner = async () => {
+    if (!selectedItem) return;
+
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      alert("Vous devez être connecté pour envoyer un message");
+      return;
+    }
+
+    const currentUser = JSON.parse(userStr);
+    const ownerId = selectedItem.user?._id;
+
+    if (!ownerId) {
+      alert("Impossible de contacter le propriétaire de cet objet");
+      return;
+    }
+
+    if (ownerId === currentUser._id) {
+      alert("C'est votre propre annonce !");
+      return;
+    }
+
+    setCreatingChat(true);
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}conversation/create`,
+        {
+          senderId: currentUser._id,
+          receiverId: ownerId,
+        }
+      );
+
+      const convId = res.data._id;
+
+      router.push(`/messages?conv=${convId}`);
+    } catch (err) {
+      console.error("Erreur création conversation :", err);
+      alert("Impossible de démarrer la discussion pour le moment.");
+    } finally {
+      setCreatingChat(false);
+    }
+  };
 
   return (
     <div className="found-page">
@@ -79,7 +124,7 @@ function Found() {
                     alt={item.description || 'Found item'}
                     className="item-image"
                     onError={(e) => {
-                      e.currentTarget.src = '/placeholder-image.jpg'; 
+                      e.currentTarget.src = '/placeholder-image.jpg';
                       e.currentTarget.alt = 'Image not available';
                     }}
                   />
@@ -102,7 +147,6 @@ function Found() {
         )}
       </div>
 
-      
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
           <div
@@ -137,7 +181,7 @@ function Found() {
                 {selectedItem.date
                   ? new Date(selectedItem.date).toLocaleDateString()
                   : 'Not specified'}
-              </p> 
+              </p>
               <p>
                 <strong>Founded By:</strong>{' '}
                 {selectedItem.user?.name
@@ -156,18 +200,16 @@ function Found() {
                   ? selectedItem.description
                   : 'Not specified'}
               </p>
-              
-                  <div className="modal-actions">
+
+              <div className="modal-actions">
                 <button
-                  className="message-btn"
-                  onClick={() =>
-                    router.push(`/messages`)
-                  }
+                  className="message-btn-f"
+                  onClick={handleMessageOwner}
+                  disabled={creatingChat}
                 >
-                  Message
+                  {creatingChat ? 'Ouverture...' : 'Message'}
                 </button>
               </div>
-
             </div>
           </div>
         </div>
@@ -175,4 +217,5 @@ function Found() {
     </div>
   );
 }
+
 export default Found;
