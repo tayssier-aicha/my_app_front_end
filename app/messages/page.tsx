@@ -7,7 +7,7 @@ import './messages.css';
 import axios from 'axios';
 import io from 'socket.io-client';
 
-// Socket outside component (singleton)
+
 const socket = io(process.env.NEXT_PUBLIC_API_URL!, {
   autoConnect: false,
 });
@@ -23,10 +23,8 @@ export default function MessagesPage() {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [newMessage, setNewMessage] = useState('');
 
-  // ─── Ref for auto-scroll ───────────────────────────────────────────────
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Connect / disconnect socket
   useEffect(() => {
     socket.connect();
 
@@ -35,7 +33,6 @@ export default function MessagesPage() {
     };
   }, []);
 
-  // Join room when conversation changes
   useEffect(() => {
     if (selectedConvId) {
       socket.emit('joinConversation', selectedConvId);
@@ -43,7 +40,7 @@ export default function MessagesPage() {
     }
   }, [selectedConvId]);
 
-  // Receive real-time messages
+ 
   useEffect(() => {
     socket.on('receiveMessage', (msg) => {
       if (msg.conversationId === selectedConvId) {
@@ -56,7 +53,6 @@ export default function MessagesPage() {
     };
   }, [selectedConvId]);
 
-  // Load user conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -71,7 +67,7 @@ export default function MessagesPage() {
 
         setConversations(res.data);
 
-        // Auto-select conversation from URL if it exists
+        
         if (initialConvId && res.data.some((c: any) => c._id === initialConvId)) {
           setSelectedConvId(initialConvId);
         }
@@ -99,35 +95,19 @@ export default function MessagesPage() {
     }
   };
 
-  const handleClick = async () => {
-    if (!newMessage.trim() || !selectedConvId) return;
+const handleClick = () => {
+  if (!newMessage.trim() || !selectedConvId) return;
 
-    const messageData = {
-      conversationId: selectedConvId,
-      senderId: currentUser._id,
-      text: newMessage.trim(),
-    };
+  socket.emit('sendMessage', {
+    conversationId: selectedConvId,
+    senderId: currentUser._id,
+    text: newMessage.trim(),
+  });
 
-    try {
-      // Send via socket for instant feel
-      socket.emit('sendMessage', messageData);
-
-      // Save to DB
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}message/send`,
-        messageData
-      );
-
-      setMessages((prev) => [...prev, res.data]);
-      setNewMessage('');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // ─── AUTO-SCROLL ───────────────────────────────────────────────────────
+  setNewMessage('');
+};
+  // AUTO-SCROLL 
   useEffect(() => {
-    // Scroll to bottom when messages change or conversation is selected
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, selectedConvId]);
 
@@ -233,7 +213,7 @@ export default function MessagesPage() {
                     })
                   )}
 
-                  {/* This empty div is used for auto-scroll */}
+                  {/* auto-scroll */}
                   <div ref={messagesEndRef} />
                 </div>
 

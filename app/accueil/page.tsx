@@ -38,7 +38,7 @@ function Accueil(_userid: any) {
           <div className="hero-cta">
             <button
               className="btn-lost"
-              onClick={() => router.push('/reportlost')
+              onClick={() => router.push('/reportfl')
               }
             >
               I've lost something 
@@ -46,7 +46,7 @@ function Accueil(_userid: any) {
 
             <button
               className="btn-found"
-              onClick={() => router.push('/reportfound')}
+              onClick={() => router.push('/reportfl')}
             >
               I've found something
             </button>
@@ -93,7 +93,7 @@ function Accueil(_userid: any) {
         <div className="container">
           <h2>Take the first step toward recovery</h2>
           <p>Report your lost item quickly and securely — increase your chances of reuniting with it faster.</p>
-          <button className="btn-lost large" onClick={() => router.push('/reportlost')}>
+          <button className="btn-lost large" onClick={() => router.push('/reportfl')}>
             Report a Lost Item Now
           </button>
         </div>

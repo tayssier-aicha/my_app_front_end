@@ -23,9 +23,19 @@ function Lost() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creatingChat, setCreatingChat] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>({});
 
   const router = useRouter();
 
+  // Charger currentUser côté client uniquement
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  // Fetch lost items
   const fetchItems = async () => {
     try {
       setLoading(true);
@@ -49,18 +59,16 @@ function Lost() {
     fetchItems();
   }, []);
 
+  // Créer ou récupérer une conversation
   const handleMessageOwner = async () => {
     if (!selectedItem) return;
 
-    const userStr = localStorage.getItem("user");
-    if (!userStr) {
+    if (!currentUser?._id) {
       alert("Vous devez être connecté pour envoyer un message");
       return;
     }
 
-    const currentUser = JSON.parse(userStr);
     const ownerId = selectedItem.user?._id;
-
     if (!ownerId) {
       alert("Impossible de contacter le propriétaire de cet objet");
       return;
@@ -83,14 +91,37 @@ function Lost() {
       );
 
       const convId = res.data._id;
-
-      // Redirection vers la page messages avec l'ID de la conversation
       router.push(`/messages?conv=${convId}`);
     } catch (err) {
       console.error("Erreur lors de la création de la conversation :", err);
       alert("Impossible de démarrer la discussion pour le moment.");
     } finally {
       setCreatingChat(false);
+    }
+  };
+
+  // Supprimer un post
+  const handleDeleteItem = async (itemId: string) => {
+    if (!confirm("Voulez-vous vraiment supprimer ce post ?")) return;
+
+    if (!currentUser?._id) {
+      alert("Vous devez être connecté");
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}item/delete/${itemId}`,
+        {
+          data: { userId: currentUser._id },
+        }
+      );
+      alert("Post supprimé !");
+      setSelectedItem(null);
+      fetchItems();
+    } catch (err) {
+      console.error(err);
+      alert("Impossible de supprimer le post");
     }
   };
 
@@ -150,10 +181,7 @@ function Lost() {
 
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="modal-close"
               onClick={() => setSelectedItem(null)}
@@ -179,40 +207,47 @@ function Lost() {
             <div className="modal-body">
               <h2>{selectedItem.description || "Lost Item"}</h2>
               <p>
-                <strong>Location:</strong>{" "}
-                {selectedItem.location || "Not specified"}
+                <strong>Location:</strong> {selectedItem.location || "Not specified"}
               </p>
               <p>
                 <strong>Date:</strong>{" "}
-                {selectedItem.date
-                  ? new Date(selectedItem.date).toLocaleDateString()
-                  : "Not specified"}
+                {selectedItem.date ? new Date(selectedItem.date).toLocaleDateString() : "Not specified"}
               </p>
               <p>
-                <strong>Lost By:</strong>{" "}
-                {selectedItem.user?.name
-                  ? selectedItem.user?.name
-                  : "Not specified"}
+                <strong>Lost By:</strong> {selectedItem.user?.name || "Not specified"}
               </p>
               <p>
-                <strong>Category:</strong>{" "}
-                {selectedItem.category ? selectedItem.category : "Not specified"}
+                <strong>Category:</strong> {selectedItem.category || "Not specified"}
               </p>
               <p>
-                <strong>Description:</strong>{" "}
-                {selectedItem.description
-                  ? selectedItem.description
-                  : "Not specified"}
+                <strong>Description:</strong> {selectedItem.description || "Not specified"}
               </p>
 
               <div className="modal-actions">
-                <button
-                  className="message-btn"
-                  onClick={handleMessageOwner}
-                  disabled={creatingChat}
-                >
-                  {creatingChat ? "Ouverture..." : "Message"}
-                </button>
+                {selectedItem.user?._id === currentUser._id ? (
+                  <>
+                    <button
+                      className="edit-btn-l"
+                      onClick={() => router.push(`/edititem/${selectedItem._id}`)}
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteItem(selectedItem._id)}
+                    >
+                      Supprimer
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="message-btn-l"
+                    onClick={handleMessageOwner}
+                    disabled={creatingChat}
+                  >
+                    {creatingChat ? "Ouverture..." : "Message"}
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -25,8 +25,18 @@ function Found() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creatingChat, setCreatingChat] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>({});
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+    }, []);
+
 
   const fetchItems = async () => {
+
     try {
       setLoading(true);
       setError(null);
@@ -90,6 +100,30 @@ function Found() {
       alert("Impossible de démarrer la discussion pour le moment.");
     } finally {
       setCreatingChat(false);
+    }
+  };
+
+   const handleDeleteItem = async (itemId: string) => {
+    if (!confirm("Voulez-vous vraiment supprimer ce post ?")) return;
+
+    if (!currentUser?._id) {
+      alert("Vous devez être connecté");
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}item/delete/${itemId}`,
+        {
+          data: { userId: currentUser._id },
+        }
+      );
+      alert("Post supprimé !");
+      setSelectedItem(null);
+      fetchItems();
+    } catch (err) {
+      console.error(err);
+      alert("Impossible de supprimer le post");
     }
   };
 
@@ -202,13 +236,30 @@ function Found() {
               </p>
 
               <div className="modal-actions">
-                <button
-                  className="message-btn-f"
-                  onClick={handleMessageOwner}
-                  disabled={creatingChat}
-                >
-                  {creatingChat ? 'Ouverture...' : 'Message'}
-                </button>
+                {selectedItem.user?._id === currentUser._id ? (
+                  <>
+                    <button
+                      className="edit-btn-f"
+                      onClick={() => router.push(`/edititem/${selectedItem._id}`)}
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteItem(selectedItem._id)}
+                    >
+                      Supprimer
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="message-btn-f"
+                    onClick={handleMessageOwner}
+                    disabled={creatingChat}
+                  >
+                    {creatingChat ? "Ouverture..." : "Message"}
+                  </button>
+                )}
               </div>
             </div>
           </div>

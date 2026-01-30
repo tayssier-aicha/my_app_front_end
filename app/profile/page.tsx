@@ -4,20 +4,21 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from "../navbar/pageN";
 import "./profile.css";
-import { LogOut, User, Mail, Calendar } from 'lucide-react';
+import { LogOut, Mail, Calendar } from 'lucide-react';
+import axios from 'axios';
 
 interface UserData {
   _id?: string;
   name?: string;
   email?: string;
-  createdAt?: string;
-  // Add more fields if your backend includes them
+  createdAt?: string; // ⚠ string, pas Date
 }
 
 export default function Profile() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -28,19 +29,36 @@ export default function Profile() {
         setUser(parsedUser);
       } catch (err) {
         console.error("Failed to parse user from localStorage", err);
-        localStorage.removeItem('user'); 
+        localStorage.removeItem('user');
       }
     }
     setLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}user/get/${user._id}`
+        );
+        setUser(res.data);
+      } catch (err) {
+        console.error("Failed to fetch user", err);
+      }
+    };
+
+    fetchUser();
+  }, [user?._id]);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
-
     setUser(null);
     router.push('/login');
   };
 
+  // ⏳ Loading
   if (loading) {
     return (
       <div className="profile-container">
@@ -52,6 +70,7 @@ export default function Profile() {
     );
   }
 
+  // ❌ Pas connecté
   if (!user) {
     return (
       <div className="profile-container">
@@ -59,7 +78,7 @@ export default function Profile() {
         <div className="content">
           <div className="not-logged-in">
             <h2>Please log in to view your profile</h2>
-            <button 
+            <button
               className="login-btn"
               onClick={() => router.push('/login')}
             >
@@ -71,6 +90,7 @@ export default function Profile() {
     );
   }
 
+  // ✅ Profil
   return (
     <div className="profile-container">
       <Navbar />
@@ -79,9 +99,9 @@ export default function Profile() {
         <div className="profile-card">
           <div className="profile-header">
             <div className="avatar">
-              {user?.name ? user?.name.charAt(0).toUpperCase() : '?'}
+              {user.name ? user.name.charAt(0).toUpperCase() : '?'}
             </div>
-            <h1>{user?.name || 'User'}</h1>
+            <h1>{user.name || 'User'}</h1>
           </div>
 
           <div className="profile-info">
@@ -102,19 +122,15 @@ export default function Profile() {
                     ? new Date(user.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })
-                    : 'Unknown'}
+                    : '-'}
                 </p>
               </div>
             </div>
-
           </div>
 
-          <button 
-            className="logout-btn"
-            onClick={handleLogout}
-          >
+          <button className="logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
             Log Out
           </button>

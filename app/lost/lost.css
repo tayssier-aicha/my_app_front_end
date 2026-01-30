@@ -22,8 +22,6 @@
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 30px;
-  
-
 }
 
 .item-card-L {
@@ -190,7 +188,7 @@
   margin-top: 2rem;
 }
 
-.message-btn {
+.message-btn-l,.edit-btn-l ,.delete-btn{
   background: linear-gradient(135deg, #6b21a8, #ec4899);
   color: white;
   border: none;
@@ -200,9 +198,20 @@
   border-radius: 999px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin: 0 0.5rem;
 }
 
-.message-btn:hover {
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+}
+.message-btn-l:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+  
+}
+
+.edit-btn-l:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
 }
