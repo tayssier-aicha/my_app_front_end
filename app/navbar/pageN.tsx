@@ -46,10 +46,9 @@ const Navbar = () => {
 
         <button
           onClick={() => {
-            //Vider le localStorage
+            
             localStorage.clear();
 
-            // Rediriger vers la page d'accueil
             router.push("/");
           }}
           className="signout-btn"
