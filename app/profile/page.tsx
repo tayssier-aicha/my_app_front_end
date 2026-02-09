@@ -4,14 +4,15 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from "../navbar/pageN";
 import "./profile.css";
-import { LogOut, Mail, Calendar } from 'lucide-react';
+import { LogOut, Mail, Calendar, User, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 
 interface UserData {
   _id?: string;
   name?: string;
   email?: string;
-  createdAt?: string; // ⚠ string, pas Date
+  createdAt?: string;
+  // Tu pourras facilement ajouter plus tard : avatar, phone, bio, etc.
 }
 
 export default function Profile() {
@@ -19,10 +20,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser) as UserData;
@@ -44,8 +43,10 @@ export default function Profile() {
           `${process.env.NEXT_PUBLIC_API_URL}user/get/${user._id}`
         );
         setUser(res.data);
+        // Optionnel : mettre à jour localStorage si tu veux garder les dernières infos
+        localStorage.setItem('user', JSON.stringify(res.data));
       } catch (err) {
-        console.error("Failed to fetch user", err);
+        console.error("Failed to refresh user data", err);
       }
     };
 
@@ -58,82 +59,94 @@ export default function Profile() {
     router.push('/login');
   };
 
-  // ⏳ Loading
   if (loading) {
     return (
-      <div className="profile-container">
+      <div className="profile-page">
         <Navbar />
-        <div className="content">
-          <div className="loading">Loading profile...</div>
+        <div className="profile-loading">
+          <div className="spinner" />
+          <p>Loading your profile...</p>
         </div>
       </div>
     );
   }
 
-  // ❌ Pas connecté
   if (!user) {
     return (
-      <div className="profile-container">
+      <div className="profile-page">
         <Navbar />
-        <div className="content">
-          <div className="not-logged-in">
-            <h2>Please log in to view your profile</h2>
-            <button
-              className="login-btn"
-              onClick={() => router.push('/login')}
-            >
-              Go to Login
-            </button>
-          </div>
+        <div className="not-logged-in">
+          <h2>Please sign in to view your profile</h2>
+          <p>You need to be logged in to access this page.</p>
+          <button
+            className="login-cta"
+            onClick={() => router.push('/login')}
+          >
+            Go to Login
+          </button>
         </div>
       </div>
     );
   }
 
-  // ✅ Profil
   return (
-    <div className="profile-container">
+    <div className="profile-page">
       <Navbar />
 
-      <div className="content">
+      <div className="profile-container">
         <div className="profile-card">
           <div className="profile-header">
-            <div className="avatar">
+            <div className="avatar-large">
               {user.name ? user.name.charAt(0).toUpperCase() : '?'}
             </div>
             <h1>{user.name || 'User'}</h1>
+            <p className="user-id">ID: {user._id?.slice(-8) || '—'}</p>
           </div>
 
-          <div className="profile-info">
-            <div className="info-row">
-              <Mail size={20} />
-              <div>
-                <label>Email</label>
-                <p>{user.email || 'Not provided'}</p>
+          <div className="profile-section">
+            <h3>Account Information</h3>
+            <div className="info-grid">
+              <div className="info-item">
+                <Mail size={20} />
+                <div>
+                  <label>Email</label>
+                  <p>{user.email || 'Not provided'}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="info-row">
-              <Calendar size={20} />
-              <div>
-                <label>Joined</label>
-                <p>
-                  {user.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : '-'}
-                </p>
+              <div className="info-item">
+                <Calendar size={20} />
+                <div>
+                  <label>Member since</label>
+                  <p>
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })
+                      : '—'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Tu peux ajouter plus tard : téléphone, ville, etc. */}
+              <div className="info-item">
+                <User size={20} />
+                <div>
+                  <label>Account type</label>
+                  <p>Standard User <ShieldCheck size={16} className="verified-icon" /></p>
+                </div>
               </div>
             </div>
           </div>
 
-          <button className="logout-btn" onClick={handleLogout}>
-            <LogOut size={18} />
-            Log Out
-          </button>
+          <div className="profile-actions">
+            <button className="logout-button" onClick={handleLogout}>
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
     </div>

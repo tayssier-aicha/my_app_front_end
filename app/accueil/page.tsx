@@ -3,97 +3,115 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../navbar/pageN';
-import './accueil.css'; 
+import './accueil.css';
 
-function Accueil(_userid: any) {
+export default function Home() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    
+
     const token = localStorage.getItem('token');
     if (!token) {
       router.replace('/login');
     }
-    
   }, [router]);
 
   if (!isMounted) return null;
-  
-  
-  
-  
+
   return (
-    <div className="accueil-page">
+    <div className="home-page">
       <Navbar />
-      <section className="hero">
+
+      <section className="hero-section">
         <div className="hero-content">
-          <h1>Find what really matters</h1>
+          <h1>Find What Really Matters</h1>
           <p className="hero-subtitle">
-            Report a lost item or help someone by declaring a found object.<br />
-            Together, we make reunions possible.
+            Report a lost item or help reunite someone with their belonging.<br />
+            Together, we make lost things found again.
           </p>
 
-          <div className="hero-cta">
+          <div className="hero-actions">
             <button
-              className="btn-lost"
-              onClick={() => router.push('/reportfl')
-              }
-            >
-              I've lost something 
-            </button>
-
-            <button
-              className="btn-found"
+              className="cta-lost"
               onClick={() => router.push('/reportfl')}
             >
-              I've found something
+              I've Lost Something
+            </button>
+
+            <button
+              className="cta-found"
+              onClick={() => router.push('/reportfl')}
+            >
+              I've Found Something
             </button>
           </div>
         </div>
       </section>
 
-      
-      <section className="how-it-works">
-        <div className="container">
-          <h2>How does it work?</h2>
+      <section className="how-it-works-section">
+        <div className="section-container">
+          <h2>How It Works</h2>
           <div className="steps-grid">
-            <div className="step-card">
-              <div className="step-number">1</div>
-              <h3>Report in just a few clicks</h3>
-              <p>Add a photo, precise description, location and date. It's quick and free.</p>
+            <div className="step-item">
+              <div className="step-circle">1</div>
+              <h3>Report in Seconds</h3>
+              <p>
+                Upload a photo, add description, location and date. It's fast, free and simple.
+              </p>
             </div>
 
-            <div className="step-card">
-              <div className="step-number">2</div>
-              <h3>The community sees your report</h3>
-              <p>Thousands of users browse reports every day.</p>
+            <div className="step-item">
+              <div className="step-circle">2</div>
+              <h3>Reach the Community</h3>
+              <p>
+                Thousands of users check reports daily — your item has more chances to be seen.
+              </p>
             </div>
 
-            <div className="step-card">
-              <div className="step-number">3</div>
-              <h3>Secure reunions</h3>
-              <p>Built-in messaging + identity verification to prevent scams.</p>
+            <div className="step-item">
+              <div className="step-circle">3</div>
+              <h3>Safe Reunions</h3>
+              <p>
+                Built-in messaging system + verification steps to avoid scams.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="recent-items">
-       
-          <div className="see-more">
-            <button onClick={() => router.push('/lost')}>View all lost items</button>
-            <button onClick={() => router.push('/found')}>View all found items</button>
+      <section className="explore-section">
+        <div className="section-container">
+          <h2>Explore Recent Reports</h2>
+          <div className="explore-buttons">
+            <button
+              className="explore-btn lost"
+              onClick={() => router.push('/lost')}
+            >
+              View Lost Items
+            </button>
+
+            <button
+              className="explore-btn found"
+              onClick={() => router.push('/found')}
+            >
+              View Found Items
+            </button>
           </div>
-        
+        </div>
       </section>
 
-      <section className="final-cta">
-        <div className="container">
-          <h2>Take the first step toward recovery</h2>
-          <p>Report your lost item quickly and securely — increase your chances of reuniting with it faster.</p>
-          <button className="btn-lost large" onClick={() => router.push('/reportfl')}>
+      <section className="final-cta-section">
+        <div className="section-container">
+          <h2>Don't Wait — Start Now</h2>
+          <p>
+            The sooner you report, the higher the chances of recovering your item quickly.
+          </p>
+          <button
+            className="cta-lost large"
+            onClick={() => router.push('/reportfl')}
+          >
             Report a Lost Item Now
           </button>
         </div>
@@ -101,4 +119,3 @@ function Accueil(_userid: any) {
     </div>
   );
 }
-export default Accueil;

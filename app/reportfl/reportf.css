@@ -1,122 +1,232 @@
-
-.Report-F-container {
-    min-height: 100vh;
-    background: #f7eefa;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1f2937;
-    display: flex;
-    flex-direction: column;
-
+.report-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f9f7fd, #f0e8ff);
+  padding-bottom: 4rem;
 }
 
-.content-l-s {
-    background: white;
-    padding: 40px 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(240, 36, 138, 0.3);
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-    margin: auto; 
-
+.report-container {
+  max-width: 620px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
 }
 
-
-.content-l-s h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 30px;
-    color: #531b6d; 
+.report-container h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #6d28d9;
+  text-align: center;
+  margin-bottom: 0.8rem;
 }
 
-
-.form-box {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
 }
 
+.form-error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.report-form {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 12px 40px rgba(108, 35, 255, 0.12);
+  border: 1px solid rgba(108, 58, 237, 0.08);
+}
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
+  margin-bottom: 1.8rem;
 }
 
 .form-group label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #4b5563;
-}
-.form-group select,
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group input[type="file"] {
-    padding: 12px 15px;
-    border-radius: 12px;
-    border: 1px solid #d1d5db;
-    font-size: 16px;
-    transition: all 0.2s;
+  display: block;
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 1rem;
 }
 
-.form-group input:focus {
-    border-color: #f783c3;
-    box-shadow: 0 0 8px rgba(247,131,195,0.3);
-    outline: none;
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.95rem 1.2rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s;
 }
+
+.form-group input:focus,
+.form-group textarea:focus,
 .form-group select:focus {
-    border-color: #f783c3;
-    box-shadow: 0 0 8px rgba(247,131,195,0.3);
-    outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+  outline: none;
 }
 
-.signup-btn {
-    padding: 12px 0;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f783c3 0%, #b198f0 100%);
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.form-group textarea {
+  resize: vertical;
+  min-height: 110px;
 }
 
-.signup-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(247,131,195,0.3);
+.radio-group {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
 }
 
-.signup-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.4rem;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
+.radio-label input {
+  display: none;
+}
+
+.radio-label:hover {
+  border-color: #a78bfa;
+  background: rgba(167, 139, 250, 0.05);
+}
+
+.radio-label.selected {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  color: #6d28d9;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.form-row .half {
+  flex: 1;
+  min-width: 220px;
+}
+
+.image-upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.image-upload-area:hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.04);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.upload-label svg {
+  color: #7c3aed;
+}
+
+.image-preview {
+  position: relative;
+  margin-top: 1.5rem;
+  display: inline-block;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.remove-image {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  transition: all 0.25s;
+  margin-top: 2rem;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(108, 35, 255, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
 
 .animate-spin {
-    animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-
-@media (max-width: 600px) {
-    .content {
-        padding: 30px 20px;
-    }
-
-    .content h1 {
-        font-size: 2rem;
-    }
-
-    .signup-btn {
-        font-size: 14px;
-    }
+/* Responsive */
+@media (max-width: 640px) {
+  .report-container {
+    padding: 0 1rem;
+  }
+  .report-form {
+    padding: 2rem 1.5rem;
+  }
+  h1 {
+    font-size: 2.2rem;
+  }
 }

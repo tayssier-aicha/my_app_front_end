@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import "./login.css";
 
-export default function Login() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,28 +21,23 @@ export default function Login() {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}user/login`,
-        {
-          email,
-          password,
-        },
+        { email, password }
       );
 
       const { token, user } = res.data;
 
-      console.log("----------------------");
-      console.log(user);
-      console.log("----------------------");
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", user?.id || user?._id);
+      localStorage.setItem("userId", user?._id || user?.id);
       localStorage.setItem(
         "user",
         JSON.stringify({
           _id: user._id || user.id,
           name: user.name,
           email: user.email,
-          isVerified:user.isVerified  
-        }),
+          isVerified: user.isVerified,
+        })
       );
+
       window.location.href = "/accueil";
     } catch (err: any) {
       const message =
@@ -58,69 +53,81 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-container">
-        <form className="login-box" onSubmit={handleLogin} noValidate>
-          <h1>Welcome back</h1>
-          <p className="subtitle">Sign in to continue</p>
+        <div className="login-card">
+          <div className="login-header">
+            <h1>Welcome Back</h1>
+            <p className="subtitle">Sign in to continue your journey</p>
+          </div>
 
           {error && <div className="error-message">{error}</div>}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value.trim())}
-              required
-              autoComplete="email"
-              autoFocus
-            />
-          </div>
-
-          <div className="form-group password-group">
-            <label htmlFor="password">Password</label>
-            <div className="password-wrapper">
+          <form onSubmit={handleLogin} className="login-form" noValidate>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
               <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 required
-                autoComplete="current-password"
+                autoComplete="email"
+                autoFocus
               />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
             </div>
-          </div>
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={20} />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
-          </button>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div className="password-wrapper">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
 
-          <div className="forgot-password">
-            <Link href="/forgot-password">Forgot password?</Link>
-          </div>
+            <button
+              type="submit"
+              className="login-button"
+              disabled={loading || !email.trim() || !password}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </button>
 
-          <div className="signup-link">
-            Don't have an account? <Link href="/signup">Sign up</Link>
-          </div>
-        </form>
+            <div className="forgot-password">
+              <Link href="/forgot-password">Forgot your password?</Link>
+            </div>
+
+            <div className="signup-prompt">
+              Don't have an account?{" "}
+              <Link href="/signup" className="signup-link">
+                Sign up
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
+export default Login;

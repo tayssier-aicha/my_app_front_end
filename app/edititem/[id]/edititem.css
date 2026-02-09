@@ -1,115 +1,262 @@
-.EditItem-container {
+.edit-page {
   min-height: 100vh;
-  background: #f7eefa;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1f2937;
+  background: linear-gradient(to bottom, #f9f7fd, #f0e8ff);
+  padding-bottom: 4rem;
+}
+
+.edit-container {
+  max-width: 620px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.edit-header {
   display: flex;
-  flex-direction: column;
-  padding-bottom: 40px;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
 }
 
-.edit-content {
-  background: white;
-  padding: 40px 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(240, 36, 138, 0.3);
-  width: 100%;
-  max-width: 500px;
-  margin: 40px auto;
-  text-align: center;
-}
-
-.edit-content h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 30px;
-  color: #531b6d;
-}
-
-.edit-form {
+.back-btn {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.form-group label {
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group input[type="file"] {
-  padding: 12px 15px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(108, 58, 237, 0.08);
+  color: #6d28d9;
+  border: none;
   border-radius: 12px;
-  border: 1px solid #d1d5db;
-  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.form-group input:focus {
-  border-color: #f783c3;
-  box-shadow: 0 0 8px rgba(247,131,195,0.3);
+.back-btn:hover {
+  background: rgba(108, 58, 237, 0.15);
+}
+
+.edit-header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #6d28d9;
+  margin: 0;
+}
+
+.form-error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.8rem;
+  text-align: center;
+}
+
+.edit-form {
+  background: white;
+  border-radius: 20px;
+  padding: 2.8rem 2.5rem;
+  box-shadow: 0 12px 40px rgba(108, 35, 255, 0.12);
+  border: 1px solid rgba(108, 58, 237, 0.08);
+}
+
+.form-group {
+  margin-bottom: 1.8rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.95rem 1.2rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
   outline: none;
 }
 
-.preview-image {
-  width: 100%;
-  max-width: 200px;
-  margin-top: 10px;
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.type-display {
+  padding: 0.9rem 1.2rem;
+  background: rgba(108, 58, 237, 0.08);
   border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  color: #6d28d9;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.form-row .half {
+  flex: 1;
+  min-width: 220px;
+}
+
+.image-section {
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 1.8rem;
+  text-align: center;
+}
+
+.image-preview {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.2rem;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.remove-image {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.no-image {
+  color: #9ca3af;
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+.change-image-btn {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  background: rgba(108, 58, 237, 0.1);
+  color: #6d28d9;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.change-image-btn:hover {
+  background: rgba(108, 58, 237, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 1rem 2.2rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.cancel-btn {
+  background: #f3f4f6;
+  color: #4b5563;
+  border: none;
+}
+
+.cancel-btn:hover {
+  background: #e5e7eb;
 }
 
 .save-btn {
-  padding: 12px 0;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #f783c3 0%, #b198f0 100%);
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
   color: white;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
-.save-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(247,131,195,0.3);
+.save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(108, 35, 255, 0.3);
 }
 
 .save-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.status-message {
-  text-align: center;
-  margin-top: 50px;
-  font-size: 1.2rem;
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #6d28d9;
+  font-size: 1.3rem;
+  gap: 1.5rem;
 }
 
-.status-message.error {
-  color: red;
+.error-state button {
+  margin-top: 1.5rem;
+  padding: 0.9rem 2rem;
+  background: #6d28d9;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
-@media (max-width: 600px) {
-  .edit-content {
-    padding: 30px 20px;
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .edit-container {
+    padding: 0 1rem;
   }
-
-  .edit-content h1 {
+  .edit-form {
+    padding: 2rem 1.8rem;
+  }
+  h1 {
     font-size: 2rem;
-  }
-
-  .save-btn {
-    font-size: 14px;
   }
 }

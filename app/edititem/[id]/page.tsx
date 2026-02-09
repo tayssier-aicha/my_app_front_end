@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Navbar from "../../navbar/pageN";
 import "./edititem.css";
+import { Loader2, X, ArrowLeft } from "lucide-react";
 
 interface Item {
   _id: string;
@@ -13,7 +14,7 @@ interface Item {
   location?: string;
   date?: string;
   image?: string | File;
-  type: string;
+  type: "lost" | "found";
   user: any;
 }
 
@@ -25,8 +26,10 @@ export default function EditItemPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [newImage, setNewImage] = useState<File | null>(null);
 
-  // Charger l'item
+  // Fetch item
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -34,10 +37,16 @@ export default function EditItemPage() {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}item/get/${id}`
         );
-        setItem(res.data);
+        const fetchedItem = res.data;
+        setItem(fetchedItem);
+        if (fetchedItem.image) {
+          setImagePreview(
+            `${process.env.NEXT_PUBLIC_API_URL}uploads/${fetchedItem.image}`
+          );
+        }
       } catch (err) {
         console.error(err);
-        setError("Impossible de charger l'item.");
+        setError("Unable to load the item.");
       } finally {
         setLoading(false);
       }
@@ -45,112 +54,228 @@ export default function EditItemPage() {
     fetchItem();
   }, [id]);
 
-  // Mettre à jour l'item
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeNewImage = () => {
+    setNewImage(null);
+    if (item?.image && typeof item.image === "string") {
+      setImagePreview(
+        `${process.env.NEXT_PUBLIC_API_URL}uploads/${item.image}`
+      );
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!item) return;
 
-    try {
-      setSaving(true);
-      const formData = new FormData();
-      formData.append("description", item.description || "");
-      formData.append("category", item.category || "");
-      formData.append("location", item.location || "");
-      formData.append("date", item.date || "");
-      formData.append("type", item.type || "lost");
+    setError(null);
+    setSaving(true);
 
-      if (item.image instanceof File) {
-        formData.append("image", item.image);
+    try {
+      const formData = new FormData();
+      formData.append("description", item.description?.trim() || "");
+      formData.append("category", item.category || "");
+      formData.append("location", item.location?.trim() || "");
+      formData.append("date", item.date || "");
+      formData.append("type", item.type);
+
+      if (newImage) {
+        formData.append("image", newImage);
       }
 
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}item/updateId/${id}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      alert("Item mis à jour !");
-      router.push("/lost");
-    } catch (err) {
+      alert("Item updated successfully!");
+      router.push(item.type === "lost" ? "/lost" : "/found");
+    } catch (err: any) {
       console.error(err);
-      alert("Impossible de mettre à jour l'item.");
+      setError(
+        err.response?.data?.message || "Failed to update the item."
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p className="status-message">Chargement...</p>;
-  if (error) return <p className="status-message error">{error}</p>;
-  if (!item) return <p className="status-message">Item introuvable</p>;
+  if (loading) {
+    return (
+      <div className="edit-page">
+        <Navbar />
+        <div className="loading-state">
+          <Loader2 className="animate-spin" size={40} />
+          <p>Loading item details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div className="edit-page">
+        <Navbar />
+        <div className="error-state">
+          <p>{error || "Item not found"}</p>
+          <button onClick={() => router.back()}>Go Back</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="EditItem-container">
+    <div className="edit-page">
       <Navbar />
-      <div className="edit-content">
-        <h1>Modifier l’Item</h1>
+
+      <div className="edit-container">
+        <div className="edit-header">
+          <button className="back-btn" onClick={() => router.back()}>
+            <ArrowLeft size={20} />
+            Back
+          </button>
+          <h1>Edit Item</h1>
+        </div>
+
+        {error && <div className="form-error">{error}</div>}
+
         <form onSubmit={handleSubmit} className="edit-form">
           <div className="form-group">
-            <label>Description</label>
-            <input
-              type="text"
+            <label htmlFor="type">Type</label>
+            <div className="type-display">
+              {item.type === "lost" ? "Lost Item" : "Found Item"}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description *</label>
+            <textarea
+              id="description"
               value={item.description || ""}
-              onChange={(e) => setItem({ ...item, description: e.target.value })}
+              onChange={(e) =>
+                setItem({ ...item, description: e.target.value })
+              }
+              rows={4}
+              placeholder="Describe the item in detail..."
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Category</label>
-            <input
-              type="text"
+            <label htmlFor="category">Category</label>
+            <select
+              id="category"
               value={item.category || ""}
-              onChange={(e) => setItem({ ...item, category: e.target.value })}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Location</label>
-            <input
-              type="text"
-              value={item.location || ""}
-              onChange={(e) => setItem({ ...item, location: e.target.value })}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Date</label>
-            <input
-              type="date"
-              value={
-                item.date ? new Date(item.date).toISOString().split("T")[0] : ""
+              onChange={(e) =>
+                setItem({ ...item, category: e.target.value })
               }
-              onChange={(e) => setItem({ ...item, date: e.target.value })}
-            />
+            >
+              <option value="">Select category</option>
+              <option value="electronics">Electronics</option>
+              <option value="accessories">Accessories / Jewelry</option>
+              <option value="clothing">Clothing / Bags</option>
+              <option value="documents">Documents / Cards</option>
+              <option value="keys">Keys</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group half">
+              <label htmlFor="date">Date</label>
+              <input
+                id="date"
+                type="date"
+                value={
+                  item.date
+                    ? new Date(item.date).toISOString().split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  setItem({ ...item, date: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="form-group half">
+              <label htmlFor="location">Location</label>
+              <input
+                id="location"
+                type="text"
+                value={item.location || ""}
+                onChange={(e) =>
+                  setItem({ ...item, location: e.target.value })
+                }
+                placeholder="City, street, landmark..."
+              />
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  setItem({ ...item, image: e.target.files[0] });
-                }
-              }}
-            />
-            {item.image && typeof item.image === "string" && (
-              <img
-                src={`${process.env.NEXT_PUBLIC_API_URL}uploads/${item.image}`}
-                alt="Current item"
-                className="preview-image"
+            <label>Current / New Image</label>
+            <div className="image-section">
+              {imagePreview ? (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Item preview" />
+                  <button
+                    type="button"
+                    className="remove-image"
+                    onClick={removeNewImage}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              ) : (
+                <div className="no-image">No image currently</div>
+              )}
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                id="image-upload"
+                hidden
               />
-            )}
+              <label htmlFor="image-upload" className="change-image-btn">
+                Change Image
+              </label>
+            </div>
           </div>
 
-          <button type="submit" className="save-btn" disabled={saving}>
-            {saving ? "Enregistrement..." : "Enregistrer"}
-          </button>
+          <div className="form-actions">
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={() => router.back()}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="save-btn" disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

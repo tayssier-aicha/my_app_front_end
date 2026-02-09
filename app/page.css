@@ -1,142 +1,132 @@
-.home-page {
+.landing-page {
   min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f8f0ff 0%, #e0d4ff 100%);
-  padding: 20px;
+  background: linear-gradient(to bottom, #f9f7fd, #f0e8ff);
+  padding: 1.5rem;
 }
 
-.home-container {
+.landing-container {
   width: 100%;
-  max-width: 420px;
-
+  max-width: 460px;
 }
 
-.welcome-box {
-  background:white;
-  border-radius: 16px;
-  padding: 48px 32px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-  box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
-  animation: glow 2s ease-in-out infinite alternate;
+.welcome-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3.2rem 2.6rem;
+  box-shadow: 0 12px 40px rgba(108, 35, 255, 0.12);
+  border: 1px solid rgba(108, 58, 237, 0.08);
+  transition: all 0.28s ease;
   text-align: center;
 }
 
-.welcome-box:hover {
-  transform: translateY(-4px);
+.welcome-card:hover {
+  box-shadow: 0 16px 48px rgba(108, 35, 255, 0.18);
+  transform: translateY(-3px);
 }
 
-.welcome-box h1 {
-  font-size: 2.1rem;
-  font-weight: 700;
-  margin: 0 0 10px;
-  background: linear-gradient(90deg, hotpink, deeppink, purple, #c026d3, hotpink);
-  background-size: 200% 200%;
+.welcome-header {
+  margin-bottom: 2.8rem;
+}
+
+.welcome-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #7c3aed, #6d28d9, #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient 4s ease infinite;
-  text-align: center;
+  margin: 0 0 0.8rem;
+  line-height: 1.1;
 }
 
 .subtitle {
-  color: #64748b;
-  font-size: 15px;
-  margin: 0 0 32px;
+  color: #6b7280;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.buttons {
+.action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-.btn-login{
+.btn-primary,
+.btn-secondary {
   width: 100%;
-  padding: 15px;
-  background: linear-gradient(90deg, #e0398d, #c026d3);
-  color: white;
+  padding: 1.15rem;
   border: none;
-  border-radius: 10px;
-  font-size: 1.02rem;
-  font-weight: 600;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
 }
 
-.btn-login:hover:not(:disabled) {
-  background: linear-gradient(90deg, #c026d3, #a21ca8);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(192, 38, 211, 0.3);
-}
-.btn-login:disabled {
-  background: #e2e8f0;
-  color: #94a3b8;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-signup{
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(90deg, #e0398d, #c026d3);
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.02rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  box-shadow: 0 6px 20px rgba(108, 35, 255, 0.25);
 }
 
-.btn-signup:hover:not(:disabled) {
-  background: linear-gradient(90deg, #c026d3, #a21ca8);
+.btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(192, 38, 211, 0.3);
-}
-.btn-signup:disabled {
-  background: #e2e8f0;
-  color: #94a3b8;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+  box-shadow: 0 12px 30px rgba(108, 35, 255, 0.35);
+  background: linear-gradient(135deg, #6d28d9, #5b21b6);
 }
 
+.btn-secondary {
+  background: white;
+  color: #6d28d9;
+  border: 2px solid #a78bfa;
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.15);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  background: rgba(167, 139, 250, 0.08);
+  border-color: #7c3aed;
+}
+
+.explore-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.explore-link a {
+  color: #7c3aed;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.explore-link a:hover {
+  color: #6d28d9;
+  text-decoration: underline;
+}
 
 /* Responsive */
 @media (max-width: 480px) {
-  .welcome-box {
-    padding: 40px 24px;
+  .welcome-card {
+    padding: 2.4rem 1.8rem;
   }
-}
-
-/* Animations — identiques à login & signup */
-@keyframes glow {
-  0% {
-    box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
+  .welcome-header h1 {
+    font-size: 2.1rem;
   }
-  50% {
-    box-shadow: 0 8px 20px rgba(255, 118, 162, 0.8);
+  .subtitle {
+    font-size: 1rem;
   }
-  100% {
-    box-shadow: 0 4px 10px rgba(255, 118, 162, 0.5);
-  }
-}
-
-@keyframes gradient {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }

@@ -1,19 +1,29 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import './forgot.css'; 
+import { Loader2, ArrowLeft } from 'lucide-react';
+import './forgot.css';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
+  const [status, setStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({
     type: null,
     message: '',
   });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!email.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your email address' });
+      return;
+    }
+
     setStatus({ type: null, message: '' });
     setLoading(true);
 
@@ -29,19 +39,19 @@ export default function ForgotPassword() {
       if (res.ok && data.success) {
         setStatus({
           type: 'success',
-          message: 'Reset link sent! Check your email (including spam folder).',
+          message: 'Reset link sent! Check your email (including spam/junk folder).',
         });
         setEmail('');
       } else {
         setStatus({
           type: 'error',
-          message: data.message || 'An error occurred. Please try again.',
+          message: data.message || 'Unable to send reset link. Please try again.',
         });
       }
     } catch {
       setStatus({
         type: 'error',
-        message: 'Network error — please check your connection.',
+        message: 'Network error — please check your connection and try again.',
       });
     } finally {
       setLoading(false);
@@ -49,48 +59,58 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>Reset Password</h1>
-          <p>We'll send you a link to reset your password</p>
-        </div>
-
-        {status.type && (
-          <div className={`status-message ${status.type}`}>
-            {status.message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-field">
-            <label htmlFor="email">Email address</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="hello@example.com"
-              required
-              autoFocus
-              autoComplete="email"
-              disabled={loading}
-            />
+    <div className="forgot-page">
+      <div className="forgot-container">
+        <div className="forgot-card">
+          <div className="forgot-header">
+            <h1>Forgot Your Password?</h1>
+            <p>Enter your email and we’ll send you a reset link</p>
           </div>
 
-          <button
-            type="submit"
-            className="primary-btn gradient-btn"
-            disabled={loading || !email.trim()}
-          >
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </button>
-        </form>
+          {status.type && (
+            <div className={`status-message ${status.type}`}>
+              {status.message}
+            </div>
+          )}
 
-        <div className="auth-footer">
-          <Link href="/login" className="back-link">
-            ← Back to Sign In
-          </Link>
+          <form onSubmit={handleSubmit} className="forgot-form">
+            <div className="form-group">
+              <label htmlFor="email">Email address</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value.trim())}
+                placeholder="hello@example.com"
+                required
+                autoFocus
+                autoComplete="email"
+                disabled={loading}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="reset-link-btn"
+              disabled={loading || !email.trim()}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Sending reset link...
+                </>
+              ) : (
+                'Send Reset Link'
+              )}
+            </button>
+          </form>
+
+          <div className="forgot-footer">
+            <Link href="/login" className="back-to-login">
+              <ArrowLeft size={16} />
+              Back to Sign In
+            </Link>
+          </div>
         </div>
       </div>
     </div>

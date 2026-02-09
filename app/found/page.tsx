@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import Navbar from '../navbar/pageN';
-import './found.css';
-import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import axios from "axios";
+import Navbar from "../navbar/pageN";
+import "./found.css";
+import { useEffect, useState } from "react";
+import { X, MessageSquare, Edit, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Item {
   category: string;
@@ -32,24 +32,20 @@ function Found() {
     if (userStr) {
       setCurrentUser(JSON.parse(userStr));
     }
-    }, []);
-
+  }, []);
 
   const fetchItems = async () => {
-
     try {
       setLoading(true);
       setError(null);
-
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}item/get?type=found`
       );
-
       const data = Array.isArray(res.data) ? res.data : [];
       setItems(data);
     } catch (err: any) {
-      console.error('Failed to fetch found items:', err);
-      setError('Could not load found items. Please try again later.');
+      console.error("Failed to fetch found items:", err);
+      setError("Unable to load found items at the moment.");
     } finally {
       setLoading(false);
     }
@@ -62,9 +58,9 @@ function Found() {
   const handleMessageOwner = async () => {
     if (!selectedItem) return;
 
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     if (!userStr) {
-      alert("Vous devez être connecté pour envoyer un message");
+      alert("You must be logged in to send a message");
       return;
     }
 
@@ -72,12 +68,12 @@ function Found() {
     const ownerId = selectedItem.user?._id;
 
     if (!ownerId) {
-      alert("Impossible de contacter le propriétaire de cet objet");
+      alert("Cannot contact the owner of this item.");
       return;
     }
 
     if (ownerId === currentUser._id) {
-      alert("C'est votre propre annonce !");
+      alert("This is your own listing.");
       return;
     }
 
@@ -93,21 +89,20 @@ function Found() {
       );
 
       const convId = res.data._id;
-
       router.push(`/messages?conv=${convId}`);
     } catch (err) {
-      console.error("Erreur création conversation :", err);
-      alert("Impossible de démarrer la discussion pour le moment.");
+      console.error("Error creating conversation:", err);
+      alert("Unable to start the conversation right now.");
     } finally {
       setCreatingChat(false);
     }
   };
 
-   const handleDeleteItem = async (itemId: string) => {
-    if (!confirm("Voulez-vous vraiment supprimer ce post ?")) return;
+  const handleDeleteItem = async (itemId: string) => {
+    if (!confirm("Are you sure you want to delete this listing?")) return;
 
     if (!currentUser?._id) {
-      alert("Vous devez être connecté");
+      alert("You must be logged in");
       return;
     }
 
@@ -118,12 +113,12 @@ function Found() {
           data: { userId: currentUser._id },
         }
       );
-      alert("Post supprimé !");
+      alert("Listing deleted successfully");
       setSelectedItem(null);
       fetchItems();
     } catch (err) {
       console.error(err);
-      alert("Impossible de supprimer le post");
+      alert("Error while deleting the listing");
     }
   };
 
@@ -134,12 +129,16 @@ function Found() {
       <div className="container-F">
         <h1>Found Items</h1>
 
-        {loading && <p className="status-message">Loading found items...</p>}
+        {loading && (
+          <div className="status-message loading">Loading found items...</div>
+        )}
 
-        {error && <p className="status-message error">{error}</p>}
+        {error && <div className="status-message error">{error}</div>}
 
         {!loading && !error && items.length === 0 && (
-          <p className="status-message">No found items reported yet.</p>
+          <div className="status-message empty">
+            No found items have been reported yet
+          </div>
         )}
 
         {!loading && items.length > 0 && (
@@ -152,28 +151,39 @@ function Found() {
                 role="button"
                 tabIndex={0}
               >
-                {item.image ? (
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}uploads/${item.image}`}
-                    alt={item.description || 'Found item'}
-                    className="item-image"
-                    onError={(e) => {
-                      e.currentTarget.src = '/placeholder-image.jpg';
-                      e.currentTarget.alt = 'Image not available';
-                    }}
-                  />
-                ) : (
-                  <div className="no-image-placeholder">No image</div>
-                )}
+                <div className="card-image-container">
+                  {item.image ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_API_URL}uploads/${item.image}`}
+                      alt={item.description || "Found item"}
+                      className="item-image"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
+                        (e.target as HTMLImageElement).alt = "Image unavailable";
+                      }}
+                    />
+                  ) : (
+                    <div className="no-image-placeholder">No image</div>
+                  )}
+                </div>
 
                 <div className="item-info">
-                  <h3>{item.description || 'No description'}</h3>
-                  <p className="location">{item.location || '—'}</p>
-                  <span className="date">
-                    {item.date
-                      ? new Date(item.date).toLocaleDateString()
-                      : '—'}
-                  </span>
+                  <h3 className="item-title">
+                    {item.description?.slice(0, 60) || "Item without description"}
+                    {item.description && item.description.length > 60 ? "..." : ""}
+                  </h3>
+                  <div className="item-meta">
+                    <span className="location">{item.location || "Location not specified"}</span>
+                    <span className="date">
+                      {item.date
+                        ? new Date(item.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : "Date unknown"}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -183,81 +193,88 @@ function Found() {
 
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="modal-close"
               onClick={() => setSelectedItem(null)}
               aria-label="Close"
             >
-              <X size={30} />
+              <X size={28} />
             </button>
 
             <div className="modal-image-wrapper">
               {selectedItem.image ? (
                 <img
                   src={`${process.env.NEXT_PUBLIC_API_URL}uploads/${selectedItem.image}`}
-                  alt={selectedItem.description || 'Found item'}
+                  alt={selectedItem.description || "Found item"}
                   className="modal-image"
                 />
               ) : (
-                <div className="no-image-placeholder large">No image available</div>
+                <div className="no-image-placeholder large">
+                  Image not available
+                </div>
               )}
             </div>
 
             <div className="modal-body">
-              <h2>{selectedItem.description || 'Found Item'}</h2>
-              <p><strong>Location:</strong> {selectedItem.location || 'Not specified'}</p>
-              <p>
-                <strong>Date:</strong>{' '}
-                {selectedItem.date
-                  ? new Date(selectedItem.date).toLocaleDateString()
-                  : 'Not specified'}
-              </p>
-              <p>
-                <strong>Founded By:</strong>{' '}
-                {selectedItem.user?.name
-                  ? selectedItem.user?.name
-                  : 'Not specified'}
-              </p>
-              <p>
-                <strong>Category:</strong>{' '}
-                {selectedItem.category
-                  ? selectedItem.category
-                  : 'Not specified'}
-              </p>
-              <p>
-                <strong>Description:</strong>{' '}
-                {selectedItem.description
-                  ? selectedItem.description
-                  : 'Not specified'}
-              </p>
+              <h2>{selectedItem.description || "Found Item"}</h2>
+
+              <div className="modal-info-grid">
+                <div>
+                  <strong>Location</strong>
+                  <p>{selectedItem.location || "—"}</p>
+                </div>
+                <div>
+                  <strong>Date</strong>
+                  <p>
+                    {selectedItem.date
+                      ? new Date(selectedItem.date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "—"}
+                  </p>
+                </div>
+                <div>
+                  <strong>Category</strong>
+                  <p>{selectedItem.category || "—"}</p>
+                </div>
+                <div>
+                  <strong>Found by</strong>
+                  <p>{selectedItem.user?.name || "—"}</p>
+                </div>
+              </div>
+
+              <div className="modal-description">
+                <strong>Full Description</strong>
+                <p>{selectedItem.description || "No description provided."}</p>
+              </div>
 
               <div className="modal-actions">
                 {selectedItem.user?._id === currentUser._id ? (
                   <>
                     <button
-                      className="edit-btn-f"
+                      className="edit-btn"
                       onClick={() => router.push(`/edititem/${selectedItem._id}`)}
                     >
-                      Modifier
+                      <Edit size={18} /> Edit
                     </button>
                     <button
                       className="delete-btn"
                       onClick={() => handleDeleteItem(selectedItem._id)}
                     >
-                      Supprimer
+                      <Trash2 size={18} /> Delete
                     </button>
                   </>
                 ) : (
                   <button
-                    className="message-btn-f"
+                    className="message-btn"
                     onClick={handleMessageOwner}
                     disabled={creatingChat}
                   >
-                    {creatingChat ? "Ouverture..." : "Message"}
+                    <MessageSquare size={18} />
+                    {creatingChat ? "Opening..." : "Contact Owner"}
                   </button>
                 )}
               </div>
